@@ -77,7 +77,6 @@ const Profile = () => {
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    console.log({ file });
     if (file) {
       const formData = new FormData();
       formData.append("profile-image", file);
@@ -99,6 +98,7 @@ const Profile = () => {
         setUserInfo({ ...userInfo, image: null });
         toast.success("Image removed successfully");
         setImage(null);
+        window.location.reload();
       }
     } catch (error) {
       console.log({ error });
