@@ -95,10 +95,10 @@ const Profile = () => {
         withCredentials: true,
       });
       if (res.status === 200) {
-        setUserInfo({ ...userInfo, image: null });
-        toast.success("Image removed successfully");
+        setUserInfo({...userInfo, image:null });
         setImage(null);
-        window.location.reload();
+        toast.success("Image removed successfully");
+        console.log({userInfo});
       }
     } catch (error) {
       console.log({ error });
