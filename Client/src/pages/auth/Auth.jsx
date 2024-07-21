@@ -6,10 +6,13 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { apiClient } from '@/lib/apiClient';
-import { SIGNUP_ROUTE } from '@/utils/constants';
+import { LOGIN_ROUTE, SIGNUP_ROUTE } from '@/utils/constants';
+import { useNavigate } from 'react-router-dom'
+import { useAppStore } from '@/store'
 
 function Auth() {
-  
+  const navigate = useNavigate()
+  const {setUserInfo} = useAppStore();
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setconfirm] = useState("")
@@ -33,15 +36,46 @@ function Auth() {
     }
     return true;
   }
+  const validateLogin =()=>{
+    if(!email.length){
+      toast.error("Email is required.");
+      return false;
+    }
+    if(!password.length){
+      toast.error("Password is required.");
+      return false;
+    }
+    if(password.length < 6){
+      toast.error("Password must be atleast 6 characters long.");
+      return false;
+    }
+    return true;
+  }
 
   const handleLogin = async () => {
-
+    if (validateLogin()){ 
+      const res = await apiClient.post(LOGIN_ROUTE, { email, password }, { withCredentials: true });
+      console.log(res);
+      if (res.data.user.id) {
+        setUserInfo(res.data.user)
+        if (res.data.user.profileSetup) {
+          navigate('/chat')
+        }
+        else {
+          navigate('/profile')
+        }
+      }
+    }
   };
 
   const handleSignup = async () => {
-      if (validateSignup()){ 
-        const res = await apiClient.post(SIGNUP_ROUTE, { email, password });
+    if (validateSignup()){ 
+        const res = await apiClient.post(SIGNUP_ROUTE, { email, password }, { withCredentials: true });
         console.log(res);
+    }
+    if (res.status === 201) {
+      setUserInfo(res.data.user)
+      navigate('/profile')
     }
   };
   
@@ -57,7 +91,7 @@ function Auth() {
             <p className="font-medium text-center text-gray-500">Fill in the details to get started with the best chat app!</p>{/* lower heading */}
           </div> 
           <div className='flex items-center justify-center w-full'>
-              <Tabs className='w-3/4'>
+              <Tabs className='w-3/4' defaultValue='login'>
                 <TabsList className="bg-transparent rounded-none w-full">
                   <TabsTrigger 
                   value="login" 
