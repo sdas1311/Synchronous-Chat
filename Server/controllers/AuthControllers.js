@@ -1,4 +1,3 @@
-import { compare } from "bcrypt";
 import User from "../models/User.model.js";
 import jwt from 'jsonwebtoken';
 import { renameSync, unlinkSync } from "fs";
@@ -18,23 +17,24 @@ export const signup = async (req, res ,next) => {
         if (!email || !password) {
             return res.status(400).send("Email and password are required");
         }
-        const userData = await User.create({email, password});
-        res.cookie('jwt', createToken(email, userData.id), {
+        const user = await User.create({email, password});
+        res.cookie('jwt', createToken(email, user.id), {
             maxAge,
             secure: true,
             sameSite: "None",
         });
         return res.status(201).json({
-            userData:{
-                email: userData.email,
-                id: userData.id,
-                profileSetup: userData.profileSetup,
+            user:{
+                email: user.email,
+                id: user.id,
+                profileSetup: user.profileSetup,
             },
         });
     } catch (error) {
         console.log({error});
         return res.status(500).send("Internal server error");
     }
+<<<<<<< HEAD
 };
 
 export const login = async (req, res ,next) => {
@@ -164,4 +164,6 @@ export const removeProfileImage = async (req, res ,next) => {
         console.log({error});
         return res.status(500).send("Internal server error");
     }
+=======
+>>>>>>> parent of 20e151e (" day 3,4")
 }
