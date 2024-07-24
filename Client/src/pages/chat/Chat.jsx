@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect } from 'react'
 import { useAppStore } from '../../store'
 import { useNavigate } from 'react-router-dom';
@@ -15,16 +16,22 @@ const Chat = () => {
       navigate('/profile');
     }
   }, [userInfo,navigate])
+=======
+import React from 'react'
+>>>>>>> parent of 20e151e (" day 3,4")
 
-  
-  
+function Chat() {
   return (
+<<<<<<< HEAD
     <div className='flex h-[100vh] text-white overflow-hidden ' >
       <ContactsContainer />
       
       {/*<EmptyChatContainer />*/}
       <ChatContainer />
     </div>
+=======
+    <div>Chat</div>
+>>>>>>> parent of 20e151e (" day 3,4")
   )
 }
 

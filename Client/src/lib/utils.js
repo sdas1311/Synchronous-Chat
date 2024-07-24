@@ -5,6 +5,7 @@ import animationData from "@/assets/lottie-json"
 export function cn(...inputs) {
   return twMerge(clsx(inputs))
 }
+<<<<<<< HEAD
 
 export const colors = [
   "bg-[#712c4a57] text-[#ff006e] border-[1px] border-[#ff006faa]", 
@@ -25,3 +26,5 @@ export const animationDefaultOptions = {
   autoplay: true,
   animationData,
 };
+=======
+>>>>>>> parent of 20e151e (" day 3,4")

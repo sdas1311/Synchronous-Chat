@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useAppStore } from '@/store'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -198,6 +199,14 @@ const Profile = () => {
       </div>
     </div>
   );
+=======
+import React from 'react'
+
+function Profile() {
+  return (
+    <div>Profile</div>
+  )
+>>>>>>> parent of 20e151e (" day 3,4")
 }
 
 export default Profile

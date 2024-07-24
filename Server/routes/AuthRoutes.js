@@ -1,4 +1,5 @@
 import { Router } from 'express';
+<<<<<<< HEAD
 import { 
     signup, 
     login, 
@@ -26,5 +27,11 @@ authRoutes.post(
  );
 
  authRoutes.delete('/remove-profile-image', verifyToken, removeProfileImage);
+=======
+import { signup } from '../controllers/AuthControllers.js';
+
+const authRoutes = Router();
+authRoutes.post('/signup', signup);
+>>>>>>> parent of 20e151e (" day 3,4")
 
 export default authRoutes;
