@@ -6,7 +6,9 @@ import Victory from '../../assets/victory.svg'
 import Background from '../../assets/login2.png'
 import { toast } from 'sonner'
 import { apiClient } from '@/lib/apiClient'
-import { SIGNUP_ROUTES } from '@/utils/constants'
+import { LOGIN_ROUTES, SIGNUP_ROUTES } from '@/utils/constants'
+import { useNavigate } from 'react-router-dom'
+import { useAppstore } from '@/store'
 
 
 
@@ -14,7 +16,21 @@ const Auth = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirm] = useState('')
+    const navigate = useNavigate();
+    const {setUserInfo} = useAppstore();
 
+    const validateLogin = () => {
+      if(!email.length){
+        toast.error('Email is required');
+        return false;
+      }
+      if(!password.length){
+        toast.error('Password is required');
+        return false;
+      }
+      return true;
+    } 
+    
     const validateSignup = () => {
       if(!email.length){
         toast.error('Email is required');
@@ -30,13 +46,38 @@ const Auth = () => {
       }
       return true;
     }
-    const handleLogin = () => {}
+    const handleLogin = async () => {
+      if(validateLogin()){
+        try {
+          const res = await apiClient.post(LOGIN_ROUTES, {email, password}, {withCredentials: true});
+          console.log(res);
+          toast.success('Login successful!');
+          if (res.data.user.id) {
+            setUserInfo(res.data.user)
+            if(res.data.user.profileSetup) navigate('/chat');
+            else  navigate('/profile');
+          }
+        }catch (error) {
+          if (error.response && error.response.status === 404) {
+            toast.error('User not found');
+          } else if (error.response && error.response.status === 400) {
+            toast.error('Incorrect password');
+          } else {
+            toast.error('An error occurred during login');
+          }
+        }
+      }
+    }
     const handleSignup = async() => {
       if(validateSignup()){
         try {
-          const res = await apiClient.post(SIGNUP_ROUTES, {email, password});
+          const res = await apiClient.post(SIGNUP_ROUTES, {email, password}, {withCredentials: true});
           console.log(res);
           toast.success('Signup successful!');
+          if (res.status === 201) {
+            setUserInfo(res.data.user)
+            navigate('/profile');
+          }
         }catch (error) {
           if (error.response && error.response.status === 409) {
             toast.error('User already exists');
@@ -58,7 +99,7 @@ const Auth = () => {
                 <p className="font-medium text-center text-gray-500">Fill in the details to get started with the best chat app!</p>
               </div> {/* lower heading */}
               <div className='flex items-center justify-center w-full'>
-                <Tabs className='w-3/4'>
+                <Tabs className='w-3/4' defaultValue='login' >
                   <TabsList className="bg-transparent rounded-none w-full">
                     <TabsTrigger 
                       value="login" 
