@@ -1,21 +1,51 @@
-import React from 'react'
+import { useState } from 'react'
 import { Input } from '../../components/ui/input'
 import { Button } from '../../components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs'
 import Victory from '../../assets/victory.svg'
 import Background from '../../assets/login2.png'
+import { toast } from 'sonner'
+import { apiClient } from '@/lib/apiClient'
+import { SIGNUP_ROUTES } from '@/utils/constants'
 
 
 
 const Auth = () => {
-    const [email, setEmail] = React.useState('')
-    const [password, setPassword] = React.useState('')
-    const [confirmPassword, setConfirm] = React.useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirm] = useState('')
 
-
+    const validateSignup = () => {
+      if(!email.length){
+        toast.error('Email is required');
+        return false;
+      }
+      if(!password.length){
+        toast.error('Password is required');
+        return false;
+      }
+      if(password !== confirmPassword){
+        toast.error('Passwords do not match');
+        return false;
+      }
+      return true;
+    }
     const handleLogin = () => {}
-    const handleSignup = () => {}
-
+    const handleSignup = async() => {
+      if(validateSignup()){
+        try {
+          const res = await apiClient.post(SIGNUP_ROUTES, {email, password});
+          console.log(res);
+          toast.success('Signup successful!');
+        }catch (error) {
+          if (error.response && error.response.status === 409) {
+            toast.error('User already exists');
+          } else {
+            toast.error('An error occurred during signup');
+          }
+        }
+      }
+    };
     return (
         <div className='h-screen w-screen flex items-center justify-center'>
           <div className='h-[80vh] bg-white border-2 border-white text-opacity-90 shadow-2xl w-[80vw] md:w-[90vw] lg:w-[70vw] xl:w-[60vw] rounded-3xl grid xl:grid-cols-2'>
@@ -76,7 +106,7 @@ const Auth = () => {
                     <Input 
                       placeholder="Confirm Password" 
                       type="password" 
-                      className="rounded-full p-6" 
+                      className="rounded-full p-3" 
                       value={confirmPassword} 
                       onChange={(e) => setConfirm(e.target.value)} 
                     />

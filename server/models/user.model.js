@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {genSalt} from "bcrypt";
+import {genSalt, hash} from "bcrypt";
 const userSchema = new mongoose.Schema({
     email: {
         type: String,
@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema({
     profileSetup:{
         type: Boolean,
         required: false,
+        default: false,
     },
 }, {
     timestamps: true,
