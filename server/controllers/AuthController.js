@@ -18,12 +18,14 @@ export const signup = async (req, res ,next) => {
         if(!email || !password){
             return res.status(400).send("Email and Password are required");
         }
-        const existingUser = await User.findOne({ email });
+
+        const existingUser = await User.findOne({ email });  //existing User
         if (existingUser) {
             console.log("User already exists");
             return res.status(409).send("User already exists");
         }
-        const user = await User.create({email, password});
+
+        const user = await User.create({email, password}); //new User
         res.cookie("jwt", createToken(email, user.id), {
             maxAge,
             secure:true,
