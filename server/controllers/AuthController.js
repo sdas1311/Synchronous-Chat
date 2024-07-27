@@ -1,7 +1,7 @@
 import { compare } from "bcrypt";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
-
+import { renameSync, unlinkSync } from "fs";
 
 const maxAge = 3 * 24 * 60 * 60 * 1000 ; // 3 days
 
@@ -90,8 +90,8 @@ export const getUserInfo = async (req, res, next) => {
             id:userData.id,
             email:userData.email,
             profileSetup:userData.profileSetup,
-            firstName:userData.firstName,
-            lastName:userData.lastName,
+            firstname:userData.firstname,
+            lastname:userData.lastname,
             image:userData.image,
             color:userData.color,
         });
@@ -104,8 +104,8 @@ export const getUserInfo = async (req, res, next) => {
 export const updateProfile = async (req, res ,next) => {
     try {
         const {userId} = req;
-        const {firstName, lastName, color} = req.body;
-        if (!firstName || !lastName ) {
+        const {firstname, lastname, color} = req.body;
+        if (!firstname || !lastname ) {
             return res
             .status(400)
             .send("First name, last name and color are required");
@@ -113,8 +113,8 @@ export const updateProfile = async (req, res ,next) => {
         const userData = await User.findByIdAndUpdate(
             userId, 
         {
-            firstName,
-            lastName,
+            firstname,
+            lastname,
             color,
             profileSetup: true,
         }, {new: true, runValidators: true});
@@ -122,8 +122,8 @@ export const updateProfile = async (req, res ,next) => {
             id: userData.id,
             email: userData.email,
             profileSetup: userData.profileSetup,
-            firstName: userData.firstName,
-            lastName: userData.lastName,
+            firstname: userData.firstname,
+            lastname: userData.lastname,
             image: userData.image,
             color: userData.color,
         });
@@ -139,12 +139,15 @@ export const addProfileImage = async (req, res ,next) => {
             return res.status(400).send("Image is required");
         }
         const date = Date.now();
-        const fileName = `uploads/profiles/${date}-${req.file.originalname}`;
+        const fileName = "uploads/profiles/"+date+req.file.originalname;
         renameSync(req.file.path, fileName);
+
         const updatedUser = await User.findByIdAndUpdate(
             req.userId, 
             {image: fileName}, 
-            {new: true, runValidators: true});
+            {new: true, runValidators: true}
+        );
+        
         return res.status(200).json({
             image: updatedUser.image,
         });
