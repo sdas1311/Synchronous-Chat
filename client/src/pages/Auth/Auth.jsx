@@ -96,8 +96,8 @@ const Auth = () => {
                   <h1 className="text-5xl font-bold md:text-6xl text-gray-800">Welcome</h1>
                   <img src={Victory} alt="victory emoji" className="h-[100px]" /> 
                 </div> {/* heading */}  
-                <p className="font-medium text-center text-gray-500">Fill in the details to get started with the best chat app!</p>
-              </div> {/* lower heading */}
+                <p className="font-medium text-center text-gray-500">Fill in the details to get started with the best chat app!</p>{/* lower heading */}
+              </div>
               <div className='flex items-center justify-center w-full'>
                 <Tabs className='w-3/4' defaultValue='login' >
                   <TabsList className="bg-transparent rounded-none w-full">

@@ -22,6 +22,8 @@ import { apiClient } from "@/lib/apiClient"
 import { HOST, SEARCH_CONTACTS_ROUTES } from "@/utils/constants"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { useAppstore } from "@/store"
+
+
 const NewDM = () => {
     const { setSelectedChatType, setSelectedChatData } = useAppstore();
     const [openNewContactModel, setOpenNewContactModel] = useState(false)
@@ -75,8 +77,8 @@ const NewDM = () => {
         <Dialog open={openNewContactModel} onOpenChange={setOpenNewContactModel}>
             <DialogContent className="bg-[#181920] border-none text-white w-[400px] h-[400px] flex flex-col" >
                 <DialogHeader>
-                <DialogTitle>Please Select a Contact</DialogTitle>
-                <DialogDescription></DialogDescription>
+                    <DialogTitle>Please Select a Contact</DialogTitle>
+                    <DialogDescription></DialogDescription>
                 </DialogHeader>
                 <div>
                     <Input 

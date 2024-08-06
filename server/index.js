@@ -2,9 +2,10 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import mongoose from 'mongoose';
+import mongoose, { set } from 'mongoose';
 import authRoutes from './routes/AuthRoutes.js';
 import contactRoutes from './routes/ContactRoutes.js';
+import setupSocket from './socket.js';
 
 dotenv.config();
 
@@ -30,6 +31,8 @@ app.use('/api/contacts', contactRoutes);
 const server = app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+setupSocket(server);
 
 mongoose.connect(databaseURL).then(() => {
     console.log('Connected to the database');

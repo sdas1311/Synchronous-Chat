@@ -89,8 +89,6 @@ const ProfileInfo = () => {
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-
-
             </div>
         </div>
     )
