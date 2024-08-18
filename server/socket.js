@@ -1,4 +1,5 @@
 import { Server as SocketIOServer } from "socket.io";
+import Message from "./models/message.model.js";
 
 const setupSocket = (server) => {
     const io = new SocketIOServer(server, {
@@ -23,6 +24,25 @@ const setupSocket = (server) => {
         }
     };
 
+    const sendMessage=async(message) => {
+        const senderSocketId = userSocketMap.get(message.sender);
+        const recipientSocketId = userSocketMap.get(message.recipient);
+        
+        const createdMessage = await Message.create(message);
+        
+        const messageData = await Message .findById(createdMessage._id)
+        .populate('sender',"id email firstName lastName image color")
+        .populate('recipient',"id email firstName lastName image color" );
+
+        if (recipientSocketId) {
+            io.to(recipientSocketId).emit('recieveMessage', messageData);
+        }
+
+        if (senderSocketId) {
+            io.to(senderSocketId).emit('recieveMessage', messageData);
+        }
+    }
+    
     io.on('connection', (socket) => {
         const userId = socket.handshake.query.userId;
 
@@ -32,15 +52,9 @@ const setupSocket = (server) => {
         } else {
             console.log('User connected without userId');
         }
-
+        socket.on('sendMessage', sendMessage );
         socket.on('disconnect', () => disconnect(socket));
-        // socket.on('send-message', ({ senderId, receiverId, text }) => {
-        //     const receiverSocketId = userSocketMap.get(receiverId);
-        //     io.to(receiverSocketId).emit('receive-message', {
-        //         senderId,
-        //         text,
-        //     });
-        // });
+        
     });
 };
 
