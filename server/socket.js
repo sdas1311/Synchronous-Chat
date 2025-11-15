@@ -2,9 +2,14 @@ import { Server as SocketIOServer } from "socket.io";
 import Message from "./models/message.model.js";
 
 const setupSocket = (server) => {
+    
+    const allowedOrigins = process.env.ORIGIN
+        .split(",")
+        .map(origin => origin.trim());
+
     const io = new SocketIOServer(server, {
         cors: {
-            origin: process.env.ORIGIN,
+            origin: allowedOrigins,
             methods: ['GET', 'POST'],
             credentials: true,
         },
