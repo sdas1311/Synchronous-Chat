@@ -12,10 +12,19 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const databaseURL = process.env.DATABASE_URL;
+const allowedOrigins = process.env.ORIGIN.split(",").map(o => o.trim());
 
 app.use(
     cors({
-        origin: [process.env.ORIGIN],
+        origin: function (origin, callback) {
+            if (!origin) return callback(null, true); // allow Postman
+
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            } else {
+                return callback(new Error("CORS not allowed: " + origin));
+            }
+        },
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
         credentials: true,
     })

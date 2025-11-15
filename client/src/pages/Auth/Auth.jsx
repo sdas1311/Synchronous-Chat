@@ -6,10 +6,9 @@ import Victory from '../../assets/victory.svg'
 import Background from '../../assets/login2.png'
 import { toast } from 'sonner'
 import { apiClient } from '@/lib/apiClient'
-import { LOGIN_ROUTES, SIGNUP_ROUTES } from '@/utils/constants'
+import { GET_USER_INFO, LOGIN_ROUTES, SIGNUP_ROUTES } from '@/utils/constants'
 import { useNavigate } from 'react-router-dom'
 import { useAppstore } from '@/store'
-
 
 
 const Auth = () => {
@@ -46,6 +45,21 @@ const Auth = () => {
       }
       return true;
     }
+    const getUserData = async()=>{
+      try {
+        const res = await apiClient.get(GET_USER_INFO,{
+          withCredentials:true
+        });
+        if(res.status === 200 && res.data.id){
+          setUserInfo(res.data);
+        } else {
+          setUserInfo(undefined);
+        }
+        console.log(res);
+      } catch (error) {
+        setUserInfo(undefined);
+      }
+    };
     const handleLogin = async () => {
       if(validateLogin()){
         try {
@@ -54,7 +68,10 @@ const Auth = () => {
           toast.success('Login successful!');
           if (res.data.user.id) {
             setUserInfo(res.data.user)
-            if(res.data.user.profileSetup) navigate('/chat');
+            if(res.data.user.profileSetup) {
+              await getUserData();
+              navigate('/chat');
+            }
             else  navigate('/profile');
           }
         }catch (error) {
@@ -63,7 +80,7 @@ const Auth = () => {
           } else if (error.response && error.response.status === 400) {
             toast.error('Incorrect password');
           } else {
-            toast.error('An error occurred during login');
+            console.error(error);
           }
         }
       }
@@ -127,7 +144,7 @@ const Auth = () => {
                       value={password} 
                       onChange={(e) => setPassword(e.target.value)} 
                     />
-                    <Button className="rounded-full p-6" onClick={handleLogin}>Login</Button>
+                    <Button className="rounded-full p-6 bg-black text-white hover:bg-black/80" onClick={handleLogin}>Login</Button>
                   </TabsContent>
                   <TabsContent className="flex flex-col gap-3" value="signup">
                     <Input 
@@ -151,7 +168,7 @@ const Auth = () => {
                       value={confirmPassword} 
                       onChange={(e) => setConfirm(e.target.value)} 
                     />
-                    <Button className="rounded-full p-6" onClick={handleSignup}>Signup</Button>
+                    <Button className="rounded-full p-6 bg-black text-white hover:bg-black/80" onClick={handleSignup}>Signup</Button>
                   </TabsContent>
                 </Tabs>
               </div>

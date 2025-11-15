@@ -37,12 +37,11 @@ const App = () => {
         console.log(res);
       } catch (error) {
         setUserInfo(undefined);
-      } finally {
-        setLoading(false);
       }
     };
     if(!userInfo){
       getUserData();
+      setLoading(false);
     } else {
       setLoading(false);
     } 
