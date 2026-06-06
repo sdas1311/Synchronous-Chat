@@ -1,10 +1,41 @@
+import { apiClient } from '@/lib/apiClient';
 import { useAppstore } from '@/store';
+import { GET_ALL_MESSAGES_ROUTE } from '@/utils/constants';
 import moment from 'moment';
 import React, { useEffect } from 'react'
 
 const MessageContainer = () => {
   const scrollRef = React.useRef();
-  const {selectedChatType, selectedChatData, selectedChatMessages } =useAppstore();
+  const {
+    selectedChatType,
+    selectedChatData, 
+    userInfo, 
+    selectedChatMessages,
+    setSelectedChatMessages 
+  } = useAppstore();
+
+  useEffect(() => {
+    const getMessages = async () => {
+      try{
+        const response = await apiClient.post(
+          GET_ALL_MESSAGES_ROUTE, 
+          { id: selectedChatData._id },
+          { withCredentials: true }
+        );
+        if(response.data.messages){
+          setSelectedChatMessages(response.data.messages);
+        }
+      }
+      catch(error){
+        console.log('Error fetching messages:', error);
+      }
+    };
+    if(selectedChatData._id && selectedChatType === 'contact'){
+      getMessages();
+    }
+  }, [selectedChatData, selectedChatType, setSelectedChatMessages]);
+
+
   useEffect(() => {
     if(scrollRef.current){
       scrollRef.current.scrollIntoView({behavior: 'smooth'});
@@ -53,7 +84,7 @@ const MessageContainer = () => {
     );
   };
   return (
-    <div className='flex-1 overflow-y-auto scrollbar-hidden p-4 px-8 md:w-[65vw]' ref={scrollRef}>
+    <div className='flex-1 overflow-y-auto scrollbar-hidden p-4 px-8 w-full' ref={scrollRef}>
       {renderMessages()}
       <div ref={scrollRef}/>
     </div>
