@@ -31,7 +31,7 @@ const MessageBar = () => {
   }
   
   const handleSendMessage = async () => {
-    if(selectedChatType === 'contact' ) {
+    if(selectedChatType === 'contact' && message.trim()) {
       socket.emit('sendMessage', {
         sender: userInfo.id,
         content: message,
@@ -39,6 +39,7 @@ const MessageBar = () => {
         messageType: 'text',
         fileUrl: undefined,
       });
+      setMessage('');
     }
   }
   return (
@@ -49,7 +50,8 @@ const MessageBar = () => {
           className="flex-1 p-5 bg-transparent rounded-md focus:border-none focus:outline-none " 
           placeholder="Type a message..."
           value={message}
-          onChange={(e)=> setMessage(e.target.value) } 
+          onChange={(e)=> setMessage(e.target.value) }
+          onKeyPress={(e)=> e.key === 'Enter' && handleSendMessage() }
         />
         <div className="relative ">
           <button className='text-neutral-400 focus:border-none focus:outline-none focus:text-white duration-300 transition-all hover:text-white ' 
@@ -73,7 +75,10 @@ const MessageBar = () => {
           <GrAttachment className='text-2xl' />
         </button>
       </div>
-      <button className='bg-[#8417ff] rounded-md flex items-center justify-center p-5 focus:border-none hover:bg-[#681ebd] focus:bg-[#681ebd] focus:outline-none focus:text-white duration-300 transition-all ' onClick={handleSendMessage} >
+      <button 
+        className='bg-[#8417ff] rounded-md flex items-center justify-center p-5 focus:border-none hover:bg-[#681ebd] focus:bg-[#681ebd] focus:outline-none focus:text-white duration-300 transition-all ' 
+        onClick={handleSendMessage} 
+      >
           <IoSend className='text-2xl' />
       </button>
     </div>
